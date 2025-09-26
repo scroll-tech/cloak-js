@@ -1,15 +1,16 @@
 {
-  "name": "cloak-js",
-  "version": "0.0.1",
+  "name": "@scroll-tech/cloak-js",
+  "version": "0.0.0",
   "description": "Javascript SDK for Cloak",
   "author": "Péter Garamvölgyi",
   "license": "MIT",
   "type": "module",
-  "main": "dist/index.cjs",
+  "main": "dist/index.js",
   "module": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
-    "dist"
+    "dist",
+    "src"
   ],
   "scripts": {
     "build": "tsc",
