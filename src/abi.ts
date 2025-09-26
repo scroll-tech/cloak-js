@@ -4,6 +4,11 @@ export const HostWethGatewayAbi = parseAbi([
   'function deposit(bytes memory _to, uint256 _amount, uint256 _keyId) payable',
 ]);
 
+export const HostERC20GatewayAbi = parseAbi([
+  'function getL2ERC20Address(address _l1Token) view returns (address)',
+  'function depositERC20(address _token, bytes memory _to, uint256 _amount, uint256 _gasLimit) payable',
+]);
+
 export const HostMessageQueueAbi = parseAbi([
   'event QueueTransaction(address indexed sender, address indexed target, uint256 value, uint64 queueIndex, uint256 gasLimit, bytes data)',
 ]);
@@ -39,6 +44,7 @@ export const WrappedETHAbi = parseAbi(['function withdraw(uint256 wad)']);
 
 const abis = {
   HostWethGateway: HostWethGatewayAbi,
+  HostERC20Gateway: HostERC20GatewayAbi,
   HostMessageQueue: HostMessageQueueAbi,
   HostMessenger: HostMessengerAbi,
   HostValidium: HostValidiumAbi,

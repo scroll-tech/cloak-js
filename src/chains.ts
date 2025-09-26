@@ -6,6 +6,7 @@ const chains: Record<CloakChainName, ChainConfig> = {
     l3Endpoint: 'http://localhost:8545',
     contracts: {
       HostWethGateway: '0x0F7c09d21b30F63038484cc39eCDE27077e9dfB1',
+      HostERC20Gateway: '0xfbE0C68e2241aa4E65C553e558A1F87ae920e562',
       HostMessenger: '0xEdD97A92Fd46C25A475829f1975876Ba48C12BDA',
       HostMessageQueue: '0x160dd98613ba6C6E0a14086a87cf36244558422E',
       HostValidium: '0x84044d3a645843bAF0752eA591E1EAB643beD904',
@@ -22,6 +23,7 @@ const chains: Record<CloakChainName, ChainConfig> = {
     l3Endpoint: 'https://cloak-devnet-sepolia-test-004.scroll.systems',
     contracts: {
       HostWethGateway: '0xED46830F8C590c182a2a6d4f8E00B99fDF4A80F1',
+      HostERC20Gateway: '0xDAbfBE555e3ea13e7d3EB942aa97134Ac2eE153f',
       HostMessenger: '0x2b212737722a674e3cdCc129B04689a1a5fe99a8',
       HostMessageQueue: '0x728C30d80e0a5d7C5369A20AdCD3DAB813085599',
       HostValidium: '0x230451558C226FC8a179F99F8D04C702dcf0341D',
@@ -38,6 +40,7 @@ const chains: Record<CloakChainName, ChainConfig> = {
     l3Endpoint: 'https://cloak-devnet-mainnet-test-001.scroll.systems',
     contracts: {
       HostWethGateway: '0x8FF6dA22ea83b0F421050Efd9DC40D4869D860Cc',
+      HostERC20Gateway: '0xeB801b1732C59229c785c1034A5A1FE272d52F80',
       HostMessenger: '0x1F71c4A5D23BD1aFE4d961081131573874b97Abc',
       HostMessageQueue: '0xe0A47388a1CAaD010b8AA2180Cd9e2aE8eB8E66F',
       HostValidium: '0x4687FB513b0921b4fc95d21610678DFf4d220031',
@@ -54,6 +57,7 @@ const chains: Record<CloakChainName, ChainConfig> = {
     l3Endpoint: 'https://cloak-xen-sepolia-rpc.scroll.io',
     contracts: {
       HostWethGateway: '0x398Af66c464f93F97423f485f14934e1B01d92d6',
+      HostERC20Gateway: '0x25A5F0f1bf1FCA96c2CD55e5c0855f3B92A8B1C7',
       HostMessenger: '0x17C095E86E4dabd19B645ceF0f04Ca583C178219',
       HostMessageQueue: '0xb5D7c8Ec8C7A72a0ed9782cB67Cc68b3915389a1',
       HostValidium: '0x283Eff377d7f38955c2aD1414DAE94e9A9b3270F',
@@ -70,6 +74,7 @@ const chains: Record<CloakChainName, ChainConfig> = {
     l3Endpoint: 'https://cloak-xen-mainnet-rpc.scroll.io',
     contracts: {
       HostWethGateway: '0xD46Ccf88eB54505709440927E9b9B836A1b679bB',
+      HostERC20Gateway: '0x1efF9B6FD12E373e21749534172Cd35c2a2719C2',
       HostMessenger: '0xecE9cfDCe7e923FD595D71fa2aA62E1502047F13',
       HostMessageQueue: '0x845f52de4d0a7E0CD36993cC1867d29cE068de77',
       HostValidium: '0xb67fcb0C2A14DF77B3DFA773750F580B43776b31',
@@ -86,6 +91,7 @@ const chains: Record<CloakChainName, ChainConfig> = {
     l3Endpoint: 'https://cloak-etherfi-sepolia-rpc.scroll.io',
     contracts: {
       HostWethGateway: '0x17E1a8f4c721CAD477F30aCe24FF14Ba66c9594e',
+      HostERC20Gateway: '0x7886C897A9C87108d68c18276a2000c746a72Ad4',
       HostMessenger: '0x1855e414FC391663edEc3fC308e246A1c96Cef1F',
       HostMessageQueue: '0xD691c3E23D0e9B36838F0008a14861E9b16639Da',
       HostValidium: '0x81235f3d814a523f5FcD17c3c0d89B05809FC61F',
@@ -102,6 +108,7 @@ const chains: Record<CloakChainName, ChainConfig> = {
     l3Endpoint: 'https://cloak-shiga-sepolia-rpc.scroll.io',
     contracts: {
       HostWethGateway: '0x4151cBb70823d5e72f7497E253664cF051F256A9',
+      HostERC20Gateway: '0x5F9b56473991619f1e54A7A921A4aF2bcF5f40e3',
       HostMessenger: '0xe2CcD708CDc157fB0697783f6e8eA9DB8F18F524',
       HostMessageQueue: '0xC0257980fE663B6320cc12e5514848b8ea0Ef40d',
       HostValidium: '0x6Ac9B33D97D8C1025b3e86Eaa58D96e36375D02B',

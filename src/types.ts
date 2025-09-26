@@ -11,6 +11,7 @@ export type CloakChainName =
 
 export interface ContractConfig {
   HostWethGateway: `0x${string}`;
+  HostERC20Gateway: `0x${string}`;
   HostMessenger: `0x${string}`;
   HostMessageQueue: `0x${string}`;
   HostValidium: `0x${string}`;
