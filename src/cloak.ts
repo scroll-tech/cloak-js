@@ -1,6 +1,7 @@
-import type { Address, Hash, Hex, TransactionReceipt } from 'viem';
+import type { Address, Hash, Hex } from 'viem';
 
 import type {
+  AnyReceipt,
   CloakChainName,
   ContractConfig,
   DepositFailed,
@@ -13,6 +14,7 @@ import { encodeFunctionData, parseEventLogs, decodeFunctionData } from 'viem';
 
 import abis from './abi.js';
 import chains from './chains.js';
+import { normalizeReceipt } from './compat.js';
 import { xDomainCalldataHash, l1MessageHash } from './utils.js';
 
 export default function cloak(name: CloakChainName) {
@@ -37,17 +39,20 @@ export default function cloak(name: CloakChainName) {
       return config.contracts;
     },
 
-    initDeposit(
+    trackDeposit(
       hash: Hash,
-      l2Receipt: TransactionReceipt,
+      l2Receipt: AnyReceipt,
       l3Address: Address,
     ): DepositFailed | DepositInitiated {
+      // Normalize receipt to common format
+      const receipt = normalizeReceipt(l2Receipt);
+
       // Check if the L2 deposit transaction succeeded.
-      const status = l2Receipt?.status || 'timeout';
-      if (status !== 'success') return { l2TxHash: hash, l2TxStatus: status } as DepositFailed;
+      if (receipt.status !== 'success')
+        return { l2TxHash: hash, l2TxStatus: receipt.status } as DepositFailed;
 
       // Find the QueueTransaction event.
-      const logs = parseEventLogs({ abi: abis.HostMessageQueue, logs: l2Receipt.logs });
+      const logs = parseEventLogs({ abi: abis.HostMessageQueue, logs: receipt.logs });
       const event = logs.find(
         (l) =>
           l.address.toLowerCase() === config.contracts.HostMessageQueue.toLowerCase() &&
@@ -108,16 +113,18 @@ export default function cloak(name: CloakChainName) {
       } as DepositInitiated;
     },
 
-    completeDeposit(deposit: DepositInitiated, l3Receipt: TransactionReceipt): DepositCompleted {
-      if (!l3Receipt) {
-        return { ...deposit, l3TxStatus: 'timeout' } as DepositCompleted;
-      }
+    completeDeposit(deposit: DepositInitiated, l3Receipt: AnyReceipt | null): DepositCompleted {
+      if (!l3Receipt) return { ...deposit, l3TxStatus: 'timeout' } as DepositCompleted;
+
+      // Normalize receipt to common format
+      const receipt = normalizeReceipt(l3Receipt);
+
       return {
         ...deposit,
-        l3TxHash: l3Receipt.transactionHash,
+        l3TxHash: receipt.transactionHash,
         l3TxStatus:
-          l3Receipt.transactionHash === deposit.possibleL3TxHashes.decrypted
-            ? l3Receipt.status
+          receipt.transactionHash === deposit.possibleL3TxHashes.decrypted
+            ? receipt.status
             : 'decryption-failed',
       } as DepositCompleted;
     },

@@ -1,7 +1,6 @@
 import { abis, cloak } from '../../src/index.js';
 
-import { createPublicClient, createWalletClient, http, parseEther } from 'viem';
-import { generatePrivateKey, privateKeyToAccount } from 'viem/accounts';
+import { Contract, FetchRequest, JsonRpcProvider, parseEther, Wallet } from 'ethers';
 
 // We use an Anvil test private key in this example. In production, never hardcode this value.
 const ANVIL_TEST_KEY = '0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80';
@@ -14,7 +13,6 @@ async function main() {
 
   // Set up the L3 account.
   const l3PrivateKey = ANVIL_TEST_KEY;
-  const l3Account = privateKeyToAccount(l3PrivateKey);
 
   // Set up the Cloak access token.
   // It can be an unlimited admin token, or a limited user token.
@@ -23,15 +21,13 @@ async function main() {
 
   // Create the L3 public and wallet clients.
   // A valid access token must be configured, otherwise some queries will fail with `unauthorized`.
-  const l3Opts = { fetchOptions: { headers: { Authorization: `Bearer ${accessToken}` } } };
-  const l3Client = createPublicClient({ transport: http(c.l3Endpoint(), l3Opts) });
-  const l3Wallet = createWalletClient({
-    transport: http(c.l3Endpoint(), l3Opts),
-    account: l3Account,
-  });
+  const request = new FetchRequest(c.l3Endpoint());
+  request.setHeader('Authorization', `Bearer ${accessToken}`);
+  const l3Provider = new JsonRpcProvider(request, undefined, { pollingInterval: 500 });
+  const l3Wallet = new Wallet(l3PrivateKey, l3Provider);
 
   // Set up the transfer recipient address on L3.
-  const recipient = privateKeyToAccount(generatePrivateKey());
+  const recipient = Wallet.createRandom();
 
   // Set the ETH transfer amount.
   let amount = parseEther('0.0000001');
@@ -39,20 +35,13 @@ async function main() {
   // Execute the transfer transaction on L3.
   // On L3, ETH is represented as WETH, and behaves like any other ERC20 token.
   // By default, gas is free, so the user does not need any gas tokens.
-  console.log(
-    `Initiating transfer from ${l3Wallet.account.address} (L3) to ${recipient.address} (L3)`,
-  );
+  console.log(`Initiating transfer from ${l3Wallet.address} (L3) to ${recipient.address} (L3)`);
 
-  const hash = await l3Wallet.writeContract({
-    chain: null,
-    address: c.contracts().ValidiumWeth,
-    abi: abis.ERC20,
-    functionName: 'transfer',
-    args: [recipient.address, amount],
-  });
+  const validiumWeth = new Contract(c.contracts().ValidiumWeth, abis.ERC20, l3Wallet);
+  const tx = await validiumWeth.transfer(recipient.address, amount);
 
-  const receipt = await l3Client.waitForTransactionReceipt({ hash, pollingInterval: 500 });
-  console.log(`Transfer completed with transaction hash ${hash} and status ${receipt?.status}`);
+  const receipt = await l3Provider.waitForTransaction(tx.hash);
+  console.log(`Transfer completed with transaction hash ${tx.hash} and status ${receipt?.status}`);
 }
 
 main().catch(console.error);
