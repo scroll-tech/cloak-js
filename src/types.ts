@@ -81,7 +81,7 @@ export interface DepositCompleted extends DepositInitiated {
 export type AnyReceipt = EthersReceipt | ViemReceipt;
 
 export interface NormalizedReceipt {
-  status: 'success' | 'failed' | 'pending';
+  transactionHash: string;
+  status: 'success' | 'reverted' | 'pending';
   logs: Log[];
-  transactionHash?: string;
 }

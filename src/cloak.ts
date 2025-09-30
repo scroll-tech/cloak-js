@@ -1,4 +1,4 @@
-import type { Address, Hash, Hex } from 'viem';
+import type { Address, Hex } from 'viem';
 
 import type {
   AnyReceipt,
@@ -39,26 +39,34 @@ export default function cloak(name: CloakChainName) {
       return config.contracts;
     },
 
-    trackDeposit(
-      hash: Hash,
-      l2Receipt: AnyReceipt,
-      l3Address: Address,
-    ): DepositFailed | DepositInitiated {
+    // encryptAddress encrypts the 20-byte address using the provided encryption key.
+    // The address parameter is a hex string, but it is encrypted as a byte array.
+    encryptAddress(address: string, encryptionKey: string): Hex {
+      const plaintext = Buffer.from(address.replace(/^0x/, ''), 'hex');
+      const ciphertext = encrypt(encryptionKey, plaintext);
+      return ('0x' + ciphertext.toString('hex')) as Hex;
+    },
+
+    trackDeposit(l2Receipt: AnyReceipt, l3Address: Address): DepositFailed | DepositInitiated {
       // Normalize receipt to common format
       const receipt = normalizeReceipt(l2Receipt);
 
       // Check if the L2 deposit transaction succeeded.
       if (receipt.status !== 'success')
-        return { l2TxHash: hash, l2TxStatus: receipt.status } as DepositFailed;
+        return { l2TxHash: receipt.transactionHash, l2TxStatus: receipt.status } as DepositFailed;
 
       // Find the QueueTransaction event.
       const logs = parseEventLogs({ abi: abis.HostMessageQueue, logs: receipt.logs });
+
       const event = logs.find(
         (l) =>
           l.address.toLowerCase() === config.contracts.HostMessageQueue.toLowerCase() &&
           l.eventName === 'QueueTransaction',
       );
-      if (!event) return { l2TxHash: hash, l2TxStatus: 'failed' } as DepositFailed;
+
+      if (!event) {
+        return { l2TxHash: receipt.transactionHash, l2TxStatus: 'failed' } as DepositFailed;
+      }
 
       // ABI-decode the outer call
       const calldata = event.args.data;
@@ -97,7 +105,7 @@ export default function cloak(name: CloakChainName) {
       });
 
       return {
-        l2TxHash: hash,
+        l2TxHash: receipt.transactionHash,
         l2TxStatus: 'success',
         queueIndex: event.args.queueIndex,
         l2XDomainCalldataHash: xDomainCalldataHash(relayMessageArgs),
@@ -127,14 +135,6 @@ export default function cloak(name: CloakChainName) {
             ? receipt.status
             : 'decryption-failed',
       } as DepositCompleted;
-    },
-
-    // encryptAddress encrypts the 20-byte address using the provided encryption key.
-    // The address parameter is a hex string, but it is encrypted as a byte array.
-    encryptAddress(address: string, encryptionKey: string): Hex {
-      const plaintext = Buffer.from(address.replace(/^0x/, ''), 'hex');
-      const ciphertext = encrypt(encryptionKey, plaintext);
-      return ('0x' + ciphertext.toString('hex')) as Hex;
     },
   };
 }

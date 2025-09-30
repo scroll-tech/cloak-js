@@ -49,31 +49,64 @@ async function main() {
   // Encrypt the recipient address.
   const recipient = c.encryptAddress(l3Account.address, encryptionKey);
 
-  // Set the ETH deposit amount.
-  const amount = parseEther('0.00001');
+  // Set the token address and the deposit amount.
+  // For simplicity, we use the WETH ERC20 token in this example, but it works the same way for any ERC20.
+  const l2Token = c.contracts().HostWeth;
+  const amount = parseEther('0.00001'); // assumes 18 decimals
 
-  // Execute the ETH deposit transaction on L2.
+  // Query the deterministic L2 -> L3 token mapping via the ERC20 gateway contract.
+  const l3Token = await l2Client.readContract({
+    address: c.contracts().HostERC20Gateway,
+    abi: abis.HostERC20Gateway,
+    functionName: 'getL2ERC20Address',
+    args: [l2Token],
+  });
+
+  console.log(`L2 token: ${l2Token}, L3 token: ${l3Token}`);
+
+  // Approve Cloak bridge to spend ERC20.
+  const approveHash = await l2Wallet.writeContract({
+    chain: null,
+    address: l2Token,
+    abi: abis.ERC20,
+    functionName: 'approve',
+    // Note: In a production setting, it is recommended to set the
+    // approved amount to 0 before changing it to a new value.
+    args: [c.contracts().HostERC20Gateway, amount],
+  });
+
+  await l2Client.waitForTransactionReceipt({
+    hash: approveHash,
+    pollingInterval: 500,
+  });
+
+  // Set the deposit gas limit.
+  // Note: For the first deposit with a token, a higher gas limit might be required for the
+  // corresponding ERC20 contract deployment on L3, otherwise the transaction might fail.
+  const gasLimit = 200_000n;
+
+  // Execute the ERC20 deposit transaction on L2.
   console.log(
     `Initiating deposit from ${l2Wallet.account.address} (L2) to ${l3Account.address} (L3)`,
   );
 
-  const l2Hash = await l2Wallet.writeContract({
+  const depositHash = await l2Wallet.writeContract({
     chain: null,
-    address: c.contracts().HostWethGateway,
+    address: c.contracts().HostERC20Gateway,
     value: amount,
-    abi: abis.HostWethGateway,
-    functionName: 'deposit',
-    args: [recipient, amount, keyId],
+    abi: abis.HostERC20Gateway,
+    functionName: 'depositERC20',
+    args: [l2Token, recipient, amount, gasLimit, keyId],
   });
 
   // Wait for transaction receipt on L2.
-  const l2Receipt = await l2Client.waitForTransactionReceipt({
-    hash: l2Hash,
+  const depositReceipt = await l2Client.waitForTransactionReceipt({
+    hash: depositHash,
     pollingInterval: 500,
   });
 
   // Process deposit: Extract the deposit details, and prepare for tracking L3 inclusion.
-  let deposit = c.trackDeposit(l2Receipt, l3Account.address);
+  let deposit = c.trackDeposit(depositReceipt, l3Account.address);
 
   // Possible L2 statuses: 'success' | 'reverted' | 'timeout'
   if (deposit.l2TxStatus !== 'success') throw 'Deposit transaction failed';
