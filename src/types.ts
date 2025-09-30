@@ -1,4 +1,5 @@
-import type { Address, Hash, Hex } from 'viem';
+import type { Address, Hash, Hex, Log, TransactionReceipt as ViemReceipt } from 'viem';
+import type { TransactionReceipt as EthersReceipt } from 'ethers';
 
 export type CloakChainName =
   | 'local-devnet'
@@ -75,4 +76,13 @@ export interface DepositInitiated {
 export interface DepositCompleted extends DepositInitiated {
   l3TxHash?: Hash;
   l3TxStatus: 'success' | 'reverted' | 'timeout' | 'decryption-failed';
+}
+
+export type AnyReceipt = EthersReceipt | ViemReceipt;
+
+export interface NormalizedReceipt {
+  hash: string;
+  status: 'success' | 'failed' | 'pending';
+  logs: Log[];
+  transactionHash?: string;
 }
