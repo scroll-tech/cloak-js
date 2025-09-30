@@ -93,7 +93,6 @@ async function main() {
   const depositHash = await l2Wallet.writeContract({
     chain: null,
     address: c.contracts().HostERC20Gateway,
-    value: amount,
     abi: abis.HostERC20Gateway,
     functionName: 'depositERC20',
     args: [l2Token, recipient, amount, gasLimit, keyId],

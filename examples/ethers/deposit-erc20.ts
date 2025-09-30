@@ -71,7 +71,7 @@ async function main() {
   // corresponding ERC20 contract deployment on L3, otherwise the transaction might fail.
   const gasLimit = 200_000n;
 
-  // Execute the ETH deposit transaction on L2.
+  // Execute the ERC20 deposit transaction on L2.
   console.log(`Initiating deposit from ${l2Wallet.address} (L2) to ${l3Wallet.address} (L3)`);
 
   // Wait for transaction receipt on L2.
