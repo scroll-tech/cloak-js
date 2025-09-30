@@ -6,7 +6,7 @@ export const HostWethGatewayAbi = parseAbi([
 
 export const HostERC20GatewayAbi = parseAbi([
   'function getL2ERC20Address(address _l1Token) view returns (address)',
-  'function depositERC20(address _token, bytes memory _to, uint256 _amount, uint256 _gasLimit) payable',
+  'function depositERC20(address _token, bytes memory _to, uint256 _amount, uint256 _gasLimit, uint256 _keyId) payable',
 ]);
 
 export const HostMessageQueueAbi = parseAbi([
@@ -36,8 +36,15 @@ export const ValidiumERC20GatewayAbi = parseAbi([
 ]);
 
 export const ERC20Abi = parseAbi([
+  'function allowance(address owner, address spender) view returns (uint256)',
+  'function approve(address spender, uint256 amount)',
   'function balanceOf(address account) view returns (uint256)',
+  'function decimals() view returns (uint8)',
+  'function name() view returns (string memory)',
+  'function symbol() view returns (string memory)',
+  'function totalSupply() view returns (uint256)',
   'function transfer(address to, uint256 amount)',
+  'function transferFrom(address from,address to, uint256 amount)',
 ]);
 
 export const WrappedETHAbi = parseAbi(['function withdraw(uint256 wad)']);

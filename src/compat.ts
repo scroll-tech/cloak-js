@@ -6,7 +6,7 @@ export function normalizeReceipt(r: AnyReceipt): NormalizedReceipt {
     // viem
     return {
       transactionHash: r.transactionHash,
-      status: r.status === 'success' ? 'success' : 'failed',
+      status: r.status === 'success' ? 'success' : 'reverted',
       logs: r.logs.map(
         (l) =>
           ({
@@ -20,7 +20,7 @@ export function normalizeReceipt(r: AnyReceipt): NormalizedReceipt {
     // ethers v6
     return {
       transactionHash: r.hash,
-      status: r.status === 1 ? 'success' : r.status === 0 ? 'failed' : 'pending',
+      status: r.status === 1 ? 'success' : r.status === 0 ? 'reverted' : 'pending',
       logs: r.logs.map(
         (l) =>
           ({

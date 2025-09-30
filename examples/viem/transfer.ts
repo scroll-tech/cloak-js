@@ -34,7 +34,7 @@ async function main() {
   const recipient = privateKeyToAccount(generatePrivateKey());
 
   // Set the ETH transfer amount.
-  let amount = parseEther('0.0000001');
+  const amount = parseEther('0.0000001');
 
   // Execute the transfer transaction on L3.
   // On L3, ETH is represented as WETH, and behaves like any other ERC20 token.

@@ -53,7 +53,7 @@ async function main() {
 
   // Set the token address and the ETH withdrawal amount.
   const l3Token = c.contracts().ValidiumWeth;
-  let amount = parseEther('0.0000001');
+  const amount = parseEther('0.0000001');
 
   // Execute the withdrawal transaction on L3.
   // On L3, ETH is represented as WETH, and behaves like any other ERC20 token.
