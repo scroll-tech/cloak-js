@@ -2,6 +2,7 @@ import type { Address, Hex } from 'viem';
 
 import type {
   AnyReceipt,
+  ChainConfig,
   CloakChainName,
   ContractConfig,
   DepositFailed,
@@ -17,10 +18,14 @@ import chains from './chains.js';
 import { normalizeReceipt } from './compat.js';
 import { xDomainCalldataHash, l1MessageHash } from './utils.js';
 
-export default function cloak(name: CloakChainName) {
+export default function cloak(chainOrConfig: CloakChainName | ChainConfig) {
   // Set chain configuration
-  if (!chains[name]) throw new Error(`Unknown chain configuration: ${name}`);
-  const config = chains[name];
+  const config: ChainConfig =
+    typeof chainOrConfig === 'string' ? chains[chainOrConfig] : chainOrConfig;
+
+  if (!config) {
+    throw new Error(`Unknown chain configuration: ${String(chainOrConfig)}`);
+  }
 
   return {
     l2Endpoint(): string {
