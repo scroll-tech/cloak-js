@@ -1,14 +1,7 @@
 import type { Address, Hash, Hex, Log, TransactionReceipt as ViemReceipt } from 'viem';
 import type { TransactionReceipt as EthersReceipt } from 'ethers';
 
-export type CloakChainName =
-  | 'local-devnet'
-  | 'sepolia-test-004'
-  | 'mainnet-test-001'
-  | 'cloak-xen/sepolia'
-  | 'cloak-xen/mainnet'
-  | 'cloak-etherfi/sepolia'
-  | 'cloak-shiga/sepolia';
+export type CloakChainName = 'local-devnet';
 
 export interface ContractConfig {
   HostWethGateway: `0x${string}`;
