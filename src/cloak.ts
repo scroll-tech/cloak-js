@@ -21,9 +21,7 @@ import { xDomainCalldataHash, l1MessageHash } from './utils.js';
 export default function cloak(chainOrConfig: CloakChainName | ChainConfig) {
   // Set chain configuration
   const config: ChainConfig =
-    typeof chainOrConfig === 'string'
-      ? chains[chainOrConfig]
-      : chainOrConfig;
+    typeof chainOrConfig === 'string' ? chains[chainOrConfig] : chainOrConfig;
 
   if (!config) {
     throw new Error(`Unknown chain configuration: ${String(chainOrConfig)}`);
